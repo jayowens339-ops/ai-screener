@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueTrend AI — Access</title>
+<style>
+:root{--bg:#0a0f1f;--card:#121936;--line:#22306a;--txt:#eaf0ff;--accent:#22c55e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:16px Inter,system-ui,Segoe UI,Roboto}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.badge{display:inline-block;background:#0e1640;border:1px solid var(--line);padding:4px 10px;border-radius:999px;color:#cfe0ff;font-size:12px}
+a.launch{display:inline-block;background:var(--accent);color:#052910;font-weight:800;padding:12px 16px;border-radius:12px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <span class="badge" id="planBadge">Access Granted</span>
+    <h1>Welcome to TrueTrend AI</h1>
+    <p>Launch the app or attach it to any chart using the bookmarklet below.</p>
+    <p><a class="launch" id="launch" href="/app.html" target="_blank">Open TrueTrend AI</a></p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h2>Attach to any chart (bookmarklet)</h2>
+    <p>Drag the button below to your bookmarks bar, open any chart, and click it.</p>
+    <p id="bmHolder"></p>
+    <p style="margin-top:8px">Works on TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, PocketOptions.</p>
+  </div>
+</div>
+
+<script>
+// show plan from query (?plan=starter|pro|lifetime)
+const p=new URLSearchParams(location.search).get('plan')||'member';
+document.getElementById('planBadge').textContent=p.charAt(0).toUpperCase()+p.slice(1)+' Access';
+
+// Build bookmarklet using this site's /api/analyze
+(function(){
+  const ORIGIN = new URL(document.getElementById('launch').href, location.origin).origin;
+  const code = `(function(){if(window.__TTAI_OVERLAY__){return;}const API='${ORIGIN}/api/analyze';const s=document.createElement('style');s.textContent='#ttai-ov{all:initial;position:fixed;z-index:999999;right:14px;bottom:14px;width:320px;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;color:#e9eeff;background:#121935;border:1px solid #29336b;border-radius:12px;padding:10px;box-shadow:0 8px 28px rgba(0,0,0,.4)}#ttai-ov *{all:unset;display:revert}#ttai-ov input,#ttai-ov select,#ttai-ov button{background:#0e1538;border:1px solid #29336b;color:#e9eeff;border-radius:8px;height:34px;padding:0 8px}#ttai-ov button{background:#22c55e;color:#04220f;font-weight:700;cursor:pointer}.t{font-size:12px;color:#93a7d9;margin-top:6px}.sig{font-weight:900;margin-top:6px}.buy{color:#22c55e}.sell{color:#ff7373}';document.head.appendChild(s);const b=document.createElement('div');b.id='ttai-ov';b.innerHTML='<div style="display:flex;gap:6px;margin-bottom:6px"><input id="tt-s" placeholder="Symbol" style="flex:1"><select id="tt-t"><option>5m</option><option>15m</option><option>1h</option><option>4h</option><option selected>Daily</option></select><button id="tt-go">Go</button></div><div style="display:flex;gap:6px"><select id="tt-str"><option>Trendline</option><option>EMA Touch</option><option>ORB</option><option>Support/Resistance</option><option>Stoch + Williams %R</option><option>RSI + MACD</option><option>Break of Structure</option><option>Pullback Continuation</option><option>Mean Reversion</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="tt-voice" checked>Voice</label></div><div class="t" id="tt-st">Attached. Watching…</div><div id="tt-out" class="t"></div><div id="tt-sig" class="sig"></div>';document.body.appendChild(b);window.__TTAI_OVERLAY__=true;const q=x=>b.querySelector(x),sym=q('#tt-s'),tf=q('#tt-t'),str=q('#tt-str'),st=q('#tt-st'),out=q('#tt-out'),sig=q('#tt-sig'),voice=q('#tt-voice');function speak(t){try{if(!voice.checked)return;speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t));}catch{}}function guess(){const u=new URL(location.href);const sp=u.searchParams.get('symbol');if(sp)return decodeURIComponent(sp).replace(/[:_]/g,'').replace(/-.*/,'');const m=location.pathname.match(/[A-Z]{2,6}(?:USDT|USD|JPY|GBP|EUR)?/);if(m)return m[0];const t=document.title.match(/[A-Z]{2,6}(?:USDT|USD|JPY|GBP|EUR)?/);return t?t[0]:'';}sym.value=guess()||'EURUSD';async function run(){st.textContent='Analyzing…';try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticker:sym.value,timeframe:tf.value,strategy:str.value})});const j=await r.json();const S=j.signals&&j.signals[0];out.textContent=(j.summary||'')+'  ['+(j.mode||'')+']';sig.textContent=S? S.action+' — '+S.reason+' ('+Math.round((S.confidence||0)*100)+'%)':'';sig.className='sig '+(S?(S.action==='BUY'?'buy':'sell'):'');if(S)speak(S.action+'. '+S.reason);}catch(e){st.textContent='Error. Try again.';}st.textContent='Watching…';}q('#tt-go').addEventListener('click',run);sym.addEventListener('keydown',e=>{if(e.key==='Enter')run();});let href=location.href,tit=document.title;setInterval(()=>{if(location.href!==href||document.title!==tit){href=location.href;tit=document.title;const g=guess();if(g&&g!==sym.value){sym.value=g;run();}}},1500);run();})();`;
+  const a=document.createElement('a'); a.textContent='Attach TrueTrend to this page';
+  a.style='display:inline-block;background:#0e1640;border:1px solid #2a3a7a;padding:10px 12px;border-radius:10px;color:#dbe6ff';
+  a.href='javascript:'+encodeURIComponent(code);
+  document.getElementById('bmHolder').appendChild(a);
+})();
+</script>
+</body>
+</html>
