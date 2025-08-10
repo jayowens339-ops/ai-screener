@@ -1,109 +1,148 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TrueTrend AI — Learn money. Earn money. Own money.</title>
-<meta name="description" content="TrueTrend AI is the first AI chart live screener with voice alerts. Works on TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, PocketOptions and more.">
-<style>
-:root{--bg:#0a0f1f;--card:#121936;--line:#22306a;--txt:#eaf0ff;--mut:#98a9d6;--accent:#22c55e;--vio:#9b87f5}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:16px Inter,system-ui,Segoe UI,Roboto}
-a{color:#cfe1ff;text-decoration:none}
-.wrap{max-width:1100px;margin:0 auto;padding:28px 16px}
-nav{display:flex;gap:14px;align-items:center;margin-bottom:14px}
-nav a{padding:6px 10px;border:1px solid #2a3a7a;border-radius:10px;background:#0f1738}
-.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;align-items:center}
-h1{font-size:42px;margin:0 0 8px}.sub{color:var(--mut);font-size:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
-.badge{display:inline-block;background:#0e1640;border:1px solid var(--line);padding:4px 10px;border-radius:999px;color:#cfe0ff;font-size:12px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-button.cta{height:48px;border-radius:12px;border:none;background:var(--accent);color:#052910;font-weight:800;padding:0 18px;cursor:pointer}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-h2{margin:6px 0 12px}
-ul{margin:8px 0 0 18px;color:#cfd9ff}
-.plan{display:flex;flex-direction:column;height:100%}
-.plan .price{font-size:28px;font-weight:900}
-.legal{font-size:12px;color:#9fb0de;margin-top:24px}
-footer{opacity:.75;margin:26px 0 18px;color:#b3c6ff}
-.logoRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.logo{border:1px solid #2a3a7a;border-radius:999px;padding:6px 10px;background:#0f1738;color:#cde0ff;font-size:13px}
-@media(max-width:900px){.hero{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <nav>
-    <a href="/">Home</a>
-    <a href="/app.html" target="_blank">Open App</a>
-    <a href="#pricing">Pricing</a>
-  </nav>
+// Vercel Serverless Function (Node 18+)
+// Uses FINNHUB_API_KEY for real candles. Optional OPENAI_API_KEY for LLM fallback.
 
-  <section class="hero">
-    <div class="card">
-      <span class="badge">First AI chart live screener</span>
-      <h1>Learn money. Earn money. Own money.</h1>
-      <p class="sub">TrueTrend AI reads any chart in real time, speaks <b>BUY/SELL</b>, and journals your trades. Works on TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, PocketOptions—<i>all of them</i>.</p>
-      <div class="row" style="margin-top:10px">
-        <a href="#pricing"><button class="cta">Start 3-Day Free Trial</button></a>
-        <span class="badge">Voice alerts • 9 strategies • Journal</span>
-      </div>
-      <div class="logoRow">
-        <span class="logo">TradingView</span><span class="logo">TradeLocker</span><span class="logo">TradeStation</span>
-        <span class="logo">Binance</span><span class="logo">Fidelity</span><span class="logo">Charles Schwab</span><span class="logo">PocketOptions</span>
-      </div>
-    </div>
+export default async function handler(req, res) {
+  // CORS for bookmarklet/extension
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST, OPTIONS');
+    return res.status(405).json({ error: 'Use POST' });
+  }
 
-    <div class="card">
-      <h2 style="margin-top:0">What you get</h2>
-      <ul>
-        <li><b>Attach to any chart</b> (bookmarklet/extension)</li>
-        <li><b>Voice</b> “BUY/SELL” with confidence score</li>
-        <li><b>9 preloaded strategies</b> (EMA Touch, ORB, BOS, Stoch+W%R, RSI+MACD, etc.)</li>
-        <li><b>Built-in trade journal</b> with CSV export</li>
-        <li>Stocks, forex, crypto, metals, indices</li>
-        <li>Alexa hookup (beta for Pro/Lifetime)</li>
-      </ul>
-    </div>
-  </section>
+  const { ticker = 'EURUSD', timeframe = 'Daily', strategy = 'Trendline' } = req.body || {};
+  const FINN = process.env.FINNHUB_API_KEY;
+  const OPENAI = process.env.OPENAI_API_KEY || process.env.GPT_API_KEY;
 
-  <section id="pricing" class="card" style="margin-top:16px">
-    <h2>Pricing</h2>
-    <div class="grid3">
-      <div class="card plan">
-        <h3>Starter</h3>
-        <div class="price">$59.99 / mo</div>
-        <small class="sub">3-day free trial</small>
-        <ul>
-          <li>Attach to any chart</li><li>Voice BUY/SELL</li><li>All 9 strategies</li><li>Journal + CSV export</li>
-        </ul>
-        <a style="margin-top:auto" href="https://buy.stripe.com/fZueVd0nPgU4dzvfkW38401"><button class="cta">Start Free Trial</button></a>
-      </div>
+  // utils
+  const nowSec = () => Math.floor(Date.now()/1000);
+  const pct = (a,b)=> (b===0?0:(a-b)/b);
+  const ema = (period, arr)=>{ const k=2/(period+1); let prev=arr[0]; const out=[prev];
+    for(let i=1;i<arr.length;i++){ prev = arr[i]*k + prev*(1-k); out.push(prev); } return out; };
+  const classify = (sym) => {
+    const s=(sym||'').toUpperCase().replace(/\s+/g,'');
+    if (s.includes(':')) return 'explicit';
+    if (/^[A-Z]{6,7}$/.test(s) || /[A-Z]+\/[A-Z]+/.test(s) || /(XAU|XAG|WTI|BRENT)/.test(s)) return 'forex';
+    if (/USDT$/.test(s) || /(BTC|ETH|SOL|DOGE|ADA)/.test(s)) return 'crypto';
+    return 'stock';
+  };
+  const mapToFinnhub = (sym, type) => {
+    const s=sym.toUpperCase().replace(/\s+/g,'');
+    if (type==='explicit') return s;
+    if (type==='forex') { const base=s.slice(0,3), quote=s.slice(-3); return `OANDA:${base}_${quote}`; }
+    if (type==='crypto') return s.includes(':')?s:`BINANCE:${s}`;
+    return s; // stock
+  };
+  const reso = (tf) => {
+    const m=String(tf).toLowerCase();
+    if (m.includes('5m')) return '5';
+    if (m.includes('15m')) return '15';
+    if (m.includes('1h')) return '60';
+    if (m.includes('4h')) return '240';
+    return 'D';
+  };
 
-      <div class="card plan">
-        <h3>Pro</h3>
-        <div class="price">$99.99 / mo</div>
-        <small class="sub">3-day free trial</small>
-        <ul>
-          <li>Everything in Starter</li><li>Priority updates</li><li>Pro presets</li>
-        </ul>
-        <a style="margin-top:auto" href="https://buy.stripe.com/3cI7sLfiJ33efHDdcO38400"><button class="cta">Start Free Trial</button></a>
-      </div>
+  // fetch candles
+  async function getCandles(sym, tf) {
+    if (!FINN) return { ok:false, error:'Missing FINNHUB_API_KEY' };
+    const type = classify(sym);
+    const symbol = mapToFinnhub(sym, type);
+    const resolution = reso(tf);
+    const now = nowSec();
+    const lookback = (resolution==='D')? 3600*24*400 : (resolution==='240'?3600*24*60 : 3600*24*7);
+    const from = now - lookback;
+    const base = 'https://finnhub.io/api/v1';
+    let path = '/stock/candle';
+    if (type==='forex' || symbol.startsWith('OANDA:')) path='/forex/candle';
+    if (type==='crypto' || symbol.startsWith('BINANCE:')) path='/crypto/candle';
+    const url = `${base}${path}?symbol=${encodeURIComponent(symbol)}&resolution=${resolution}&from=${from}&to=${now}&token=${FINN}`;
+    const r = await fetch(url);
+    if (!r.ok) return { ok:false, error:`Finnhub ${r.status}` };
+    const j = await r.json();
+    if (j.s!=='ok' || !Array.isArray(j.c) || j.c.length<60) return { ok:false, error:'No candles', meta:{symbol,resolution}};
+    return { ok:true, symbol, resolution, t:j.t, o:j.o, h:j.h, l:j.l, c:j.c };
+  }
 
-      <div class="card plan">
-        <h3>Lifetime</h3>
-        <div class="price">$999 one-time</div>
-        <small class="sub">3-day free trial → then lifetime</small>
-        <ul>
-          <li>Everything in Pro</li><li>Lifetime access & updates</li><li>VIP support</li>
-        </ul>
-        <a style="margin-top:auto" href="https://buy.stripe.com/bJe00jfiJ7ju3YVdcO38406"><button class="cta">Start Free Trial</button></a>
-      </div>
-    </div>
-    <div class="legal">Cancel any time during the trial to avoid charges. Not financial advice. Not affiliated with TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, or PocketOptions.</div>
-  </section>
+  // strategy engine
+  function decide(closes, strategyName){
+    const e9=ema(9,closes), e50=ema(50,closes);
+    const last=closes.at(-1), p9=e9.at(-1), p50=e50.at(-1);
+    const slope = closes.at(-1) - closes.at(-6);
+    const up = p9>p50 && slope>0, down = p9<p50 && slope<0;
+    let action = up ? 'BUY' : (down ? 'SELL' : (last>=p9?'SELL':'BUY'));
+    let reason = up?'Above EMA50 with rising EMA9':(down?'Below EMA50 with falling EMA9':'Mean reversion toward EMA9');
+    const dist9 = Math.abs(pct(last,p9));
+    if (/ema touch/i.test(strategyName)) {
+      if (dist9 < 0.002) action = up ? 'BUY' : 'SELL'; else action='WAIT';
+      reason = `Distance to EMA9: ${(dist9*100).toFixed(2)}%`;
+    } else if (/orb/i.test(strategyName)) {
+      reason = 'Use first 15m range break; trade break direction';
+    } else if (/support\/resistance/i.test(strategyName)) {
+      reason = up?'Buy pullbacks to prior resistance':'Sell bounces to prior support';
+    } else if (/stoch/i.test(strategyName) || /williams/i.test(strategyName)) {
+      reason = up?'Stoch/W%R up with trend':'Stoch/W%R down with trend';
+    } else if (/rsi.*macd/i.test(strategyName)) {
+      reason = up?'RSI>50 & MACD>0':'RSI<50 & MACD<0';
+    } else if (/break of structure/i.test(strategyName)) {
+      reason = up?'Higher highs; buy BOS retest':'Lower lows; sell BOS retest';
+    } else if (/pullback continuation/i.test(strategyName)) {
+      reason = up?'Buy EMA9 pullbacks in uptrend':'Sell EMA9 pullbacks in downtrend';
+    } else if (/mean reversion/i.test(strategyName)) {
+      action = last>p9 ? 'SELL' : 'BUY'; reason='Fade back to EMA9';
+    }
+    const conf = Math.max(0.5, Math.min(0.92, 0.55 + (up||down?0.2:0) + Math.abs(pct(p9,p50))*0.6));
+    return { action, reason, confidence: conf };
+  }
 
-  <footer>© <span id="yr"></span> TrueTrend AI • Learn money. Earn money. Own money.</footer>
-</div>
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
-</body>
-</html>
+  async function run(){
+    const data = await getCandles(ticker, timeframe);
+    if (!data.ok) return { ok:false, error:data.error, meta:data.meta };
+    const closes = data.c.slice(-300);
+    const sig = decide(closes, strategy);
+    return {
+      ok:true, mode:'live-data',
+      summary: `${ticker.toUpperCase()} • ${timeframe} • ${strategy} — ${sig.action}.`,
+      checklist: [
+        `EMA9 ${ema(9,closes).at(-1) > ema(50,closes).at(-1) ? 'above' : 'below'} EMA50`,
+        `Last close ${closes.at(-1) >= ema(9,closes).at(-1) ? 'above' : 'below'} EMA9`,
+        `Slope ${closes.at(-1) - closes.at(-6) > 0 ? 'up' : (closes.at(-1) - closes.at(-6) < 0 ? 'down' : 'flat')} (last 5 bars)`
+      ],
+      signals: [ { ...sig, ttlSec: 900 } ],
+      price: closes.at(-1),
+      note: { finnhubSymbol: data.symbol, resolution: data.resolution }
+    };
+  }
+
+  let result = await run();
+
+  // if live data failed, optional LLM summary
+  if (!result.ok && OPENAI) {
+    try{
+      const prompt = `You are TrueTrend AI. JSON only with fields: summary, checklist(3), signals([{action, reason, confidence, ttlSec}]). Context: ${ticker}, ${timeframe}, ${strategy}.`;
+      const r = await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Authorization':`Bearer ${OPENAI}`,'Content-Type':'application/json'},
+        body:JSON.stringify({model:'gpt-4o-mini',temperature:0.2,messages:[
+          {role:'system',content:'Return strict JSON; concise and tradable.'},
+          {role:'user',content:prompt}
+        ]})
+      });
+      const j = await r.json(); const raw = j?.choices?.[0]?.message?.content || '';
+      try { const parsed = JSON.parse(raw); return res.status(200).json({ ok:true, mode:'live-llm', ...parsed }); }
+      catch { return res.status(200).json({ ok:true, mode:'live-llm', raw }); }
+    }catch(e){ /* ignore and fall through */ }
+  }
+
+  if (!result.ok) {
+    return res.status(200).json({
+      ok:true, mode:'fallback',
+      summary:`Fallback analysis for ${ticker} on ${timeframe} — ${strategy}.`,
+      checklist:['Trend check unavailable','Data fetch failed','Use conservative risk'],
+      signals:[{action:'BUY', reason:'Fallback signal', confidence:.55, ttlSec:900}],
+      error: result.error || 'Unknown'
+    });
+  }
+  return res.status(200).json(result);
+}
