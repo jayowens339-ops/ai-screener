@@ -1,109 +1,48 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TrueTrend AI — Learn money. Earn money. Own money.</title>
-<meta name="description" content="TrueTrend AI is the first AI chart live screener with voice alerts. Works on TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, PocketOptions and more.">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueTrend AI — Access</title>
 <style>
-:root{--bg:#0a0f1f;--card:#121936;--line:#22306a;--txt:#eaf0ff;--mut:#98a9d6;--accent:#22c55e;--vio:#9b87f5}
+:root{--bg:#0a0f1f;--card:#121936;--line:#22306a;--txt:#eaf0ff;--accent:#22c55e}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:16px Inter,system-ui,Segoe UI,Roboto}
-a{color:#cfe1ff;text-decoration:none}
-.wrap{max-width:1100px;margin:0 auto;padding:28px 16px}
-nav{display:flex;gap:14px;align-items:center;margin-bottom:14px}
-nav a{padding:6px 10px;border:1px solid #2a3a7a;border-radius:10px;background:#0f1738}
-.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;align-items:center}
-h1{font-size:42px;margin:0 0 8px}.sub{color:var(--mut);font-size:18px}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
 .badge{display:inline-block;background:#0e1640;border:1px solid var(--line);padding:4px 10px;border-radius:999px;color:#cfe0ff;font-size:12px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-button.cta{height:48px;border-radius:12px;border:none;background:var(--accent);color:#052910;font-weight:800;padding:0 18px;cursor:pointer}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-h2{margin:6px 0 12px}
-ul{margin:8px 0 0 18px;color:#cfd9ff}
-.plan{display:flex;flex-direction:column;height:100%}
-.plan .price{font-size:28px;font-weight:900}
-.legal{font-size:12px;color:#9fb0de;margin-top:24px}
-footer{opacity:.75;margin:26px 0 18px;color:#b3c6ff}
-.logoRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.logo{border:1px solid #2a3a7a;border-radius:999px;padding:6px 10px;background:#0f1738;color:#cde0ff;font-size:13px}
-@media(max-width:900px){.hero{grid-template-columns:1fr}}
+a.launch{display:inline-block;background:var(--accent);color:#052910;font-weight:800;padding:12px 16px;border-radius:12px;text-decoration:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <nav>
-    <a href="/">Home</a>
-    <a href="/app.html" target="_blank">Open App</a>
-    <a href="#pricing">Pricing</a>
-  </nav>
+  <div class="card">
+    <span class="badge" id="planBadge">Access Granted</span>
+    <h1>Welcome to TrueTrend AI</h1>
+    <p>Launch the app or attach it to any chart using the bookmarklet below.</p>
+    <p><a class="launch" id="launch" href="/app.html" target="_blank">Open TrueTrend AI</a></p>
+  </div>
 
-  <section class="hero">
-    <div class="card">
-      <span class="badge">First AI chart live screener</span>
-      <h1>Learn money. Earn money. Own money.</h1>
-      <p class="sub">TrueTrend AI reads any chart in real time, speaks <b>BUY/SELL</b>, and journals your trades. Works on TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, PocketOptions—<i>all of them</i>.</p>
-      <div class="row" style="margin-top:10px">
-        <a href="#pricing"><button class="cta">Start 3-Day Free Trial</button></a>
-        <span class="badge">Voice alerts • 9 strategies • Journal</span>
-      </div>
-      <div class="logoRow">
-        <span class="logo">TradingView</span><span class="logo">TradeLocker</span><span class="logo">TradeStation</span>
-        <span class="logo">Binance</span><span class="logo">Fidelity</span><span class="logo">Charles Schwab</span><span class="logo">PocketOptions</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 style="margin-top:0">What you get</h2>
-      <ul>
-        <li><b>Attach to any chart</b> (bookmarklet/extension)</li>
-        <li><b>Voice</b> “BUY/SELL” with confidence score</li>
-        <li><b>9 preloaded strategies</b> (EMA Touch, ORB, BOS, Stoch+W%R, RSI+MACD, etc.)</li>
-        <li><b>Built-in trade journal</b> with CSV export</li>
-        <li>Stocks, forex, crypto, metals, indices</li>
-        <li>Alexa hookup (beta for Pro/Lifetime)</li>
-      </ul>
-    </div>
-  </section>
-
-  <section id="pricing" class="card" style="margin-top:16px">
-    <h2>Pricing</h2>
-    <div class="grid3">
-      <div class="card plan">
-        <h3>Starter</h3>
-        <div class="price">$59.99 / mo</div>
-        <small class="sub">3-day free trial</small>
-        <ul>
-          <li>Attach to any chart</li><li>Voice BUY/SELL</li><li>All 9 strategies</li><li>Journal + CSV export</li>
-        </ul>
-        <a style="margin-top:auto" href="https://buy.stripe.com/fZueVd0nPgU4dzvfkW38401"><button class="cta">Start Free Trial</button></a>
-      </div>
-
-      <div class="card plan">
-        <h3>Pro</h3>
-        <div class="price">$99.99 / mo</div>
-        <small class="sub">3-day free trial</small>
-        <ul>
-          <li>Everything in Starter</li><li>Priority updates</li><li>Pro presets</li>
-        </ul>
-        <a style="margin-top:auto" href="https://buy.stripe.com/3cI7sLfiJ33efHDdcO38400"><button class="cta">Start Free Trial</button></a>
-      </div>
-
-      <div class="card plan">
-        <h3>Lifetime</h3>
-        <div class="price">$999 one-time</div>
-        <small class="sub">3-day free trial → then lifetime</small>
-        <ul>
-          <li>Everything in Pro</li><li>Lifetime access & updates</li><li>VIP support</li>
-        </ul>
-        <a style="margin-top:auto" href="https://buy.stripe.com/bJe00jfiJ7ju3YVdcO38406"><button class="cta">Start Free Trial</button></a>
-      </div>
-    </div>
-    <div class="legal">Cancel any time during the trial to avoid charges. Not financial advice. Not affiliated with TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, or PocketOptions.</div>
-  </section>
-
-  <footer>© <span id="yr"></span> TrueTrend AI • Learn money. Earn money. Own money.</footer>
+  <div class="card" style="margin-top:14px">
+    <h2>Attach to any chart (bookmarklet)</h2>
+    <p>Drag the button below to your bookmarks bar, open any chart, and click it.</p>
+    <p id="bmHolder"></p>
+    <p style="margin-top:8px">Works on TradingView, TradeLocker, TradeStation, Binance, Fidelity, Schwab, PocketOptions.</p>
+  </div>
 </div>
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+
+<script>
+// show plan from query (?plan=starter|pro|lifetime)
+const p=new URLSearchParams(location.search).get('plan')||'member';
+document.getElementById('planBadge').textContent=p.charAt(0).toUpperCase()+p.slice(1)+' Access';
+
+// Build bookmarklet using this site's /api/analyze
+(function(){
+  const ORIGIN = new URL(document.getElementById('launch').href, location.origin).origin;
+  const code = `(function(){if(window.__TTAI_OVERLAY__){return;}const API='${ORIGIN}/api/analyze';const s=document.createElement('style');s.textContent='#ttai-ov{all:initial;position:fixed;z-index:999999;right:14px;bottom:14px;width:320px;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;color:#e9eeff;background:#121935;border:1px solid #29336b;border-radius:12px;padding:10px;box-shadow:0 8px 28px rgba(0,0,0,.4)}#ttai-ov *{all:unset;display:revert}#ttai-ov input,#ttai-ov select,#ttai-ov button{background:#0e1538;border:1px solid #29336b;color:#e9eeff;border-radius:8px;height:34px;padding:0 8px}#ttai-ov button{background:#22c55e;color:#04220f;font-weight:700;cursor:pointer}.t{font-size:12px;color:#93a7d9;margin-top:6px}.sig{font-weight:900;margin-top:6px}.buy{color:#22c55e}.sell{color:#ff7373}';document.head.appendChild(s);const b=document.createElement('div');b.id='ttai-ov';b.innerHTML='<div style="display:flex;gap:6px;margin-bottom:6px"><input id="tt-s" placeholder="Symbol" style="flex:1"><select id="tt-t"><option>5m</option><option>15m</option><option>1h</option><option>4h</option><option selected>Daily</option></select><button id="tt-go">Go</button></div><div style="display:flex;gap:6px"><select id="tt-str"><option>Trendline</option><option>EMA Touch</option><option>ORB</option><option>Support/Resistance</option><option>Stoch + Williams %R</option><option>RSI + MACD</option><option>Break of Structure</option><option>Pullback Continuation</option><option>Mean Reversion</option></select><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="tt-voice" checked>Voice</label></div><div class="t" id="tt-st">Attached. Watching…</div><div id="tt-out" class="t"></div><div id="tt-sig" class="sig"></div>';document.body.appendChild(b);window.__TTAI_OVERLAY__=true;const q=x=>b.querySelector(x),sym=q('#tt-s'),tf=q('#tt-t'),str=q('#tt-str'),st=q('#tt-st'),out=q('#tt-out'),sig=q('#tt-sig'),voice=q('#tt-voice');function speak(t){try{if(!voice.checked)return;speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t));}catch{}}function guess(){const u=new URL(location.href);const sp=u.searchParams.get('symbol');if(sp)return decodeURIComponent(sp).replace(/[:_]/g,'').replace(/-.*/,'');const m=location.pathname.match(/[A-Z]{2,6}(?:USDT|USD|JPY|GBP|EUR)?/);if(m)return m[0];const t=document.title.match(/[A-Z]{2,6}(?:USDT|USD|JPY|GBP|EUR)?/);return t?t[0]:'';}sym.value=guess()||'EURUSD';async function run(){st.textContent='Analyzing…';try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticker:sym.value,timeframe:tf.value,strategy:str.value})});const j=await r.json();const S=j.signals&&j.signals[0];out.textContent=(j.summary||'')+'  ['+(j.mode||'')+']';sig.textContent=S? S.action+' — '+S.reason+' ('+Math.round((S.confidence||0)*100)+'%)':'';sig.className='sig '+(S?(S.action==='BUY'?'buy':'sell'):'');if(S)speak(S.action+'. '+S.reason);}catch(e){st.textContent='Error. Try again.';}st.textContent='Watching…';}q('#tt-go').addEventListener('click',run);sym.addEventListener('keydown',e=>{if(e.key==='Enter')run();});let href=location.href,tit=document.title;setInterval(()=>{if(location.href!==href||document.title!==tit){href=location.href;tit=document.title;const g=guess();if(g&&g!==sym.value){sym.value=g;run();}}},1500);run();})();`;
+  const a=document.createElement('a'); a.textContent='Attach TrueTrend to this page';
+  a.style='display:inline-block;background:#0e1640;border:1px solid #2a3a7a;padding:10px 12px;border-radius:10px;color:#dbe6ff';
+  a.href='javascript:'+encodeURIComponent(code);
+  document.getElementById('bmHolder').appendChild(a);
+})();
+</script>
 </body>
 </html>
